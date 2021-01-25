@@ -21,3 +21,7 @@ $('.form-check-input').on('click', function() {
     BG.toggleFlags(time);
   }
 });
+
+$('#close-popup').on('click', function() {
+  window.close();
+});

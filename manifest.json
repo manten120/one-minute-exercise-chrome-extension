@@ -9,10 +9,13 @@
     "scripts": ["background.js"],
     "persistent": true
   },
-  "content_scripts": [{ 
-    "matches": ["https://rocky-basin-37839.herokuapp.com/main"],
-    "js": ["lib/jquery-3.5.1.min.js", "contentScript.js"]
-  }],
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": ["https://rocky-basin-37839.herokuapp.com/main"],
+      "js": ["jquery-3.5.1.min.js", "contentScript.js"]
+    }
+  ],
   "permissions": ["activeTab", "storage"],
   "manifest_version": 2
 }
