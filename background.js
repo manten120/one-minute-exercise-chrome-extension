@@ -1,6 +1,8 @@
 const siteUrl = "https://rocky-basin-37839.herokuapp.com/main";
 
 // ※constやletをつかうとpopup.jsから呼び出せないためvarをつかう
+// 時刻とsiteUrlを開くかを表す真偽値のペア
+// "8: true"ならば8時0分にsiteUrlを開く
 var flags = {
   0: true,
   1: true,
@@ -28,33 +30,38 @@ var flags = {
   23: true,
 };
 
+// chrome storageにflagsが保存されているならばそれを使う
 chrome.storage.local.get(['flags'], (result) => {
   if (result.flags) {
     flags = result.flags;
   }
 });
 
-// ※constやletをつかうとpopup.jsから呼び出せないためvarをつかう
+// popup.jsから呼び出し、flagsの真偽値をトグルする
 var toggleFlags = (time) => {
   flags[time] = !flags[time];
+  // chrome storage に flags を保存する
   chrome.storage.local.set({ flags });
+  console.log(flags);
 }
 
-let windowId; // undefined
+// 自動で開いたウインドウを特定するIDが入る
+// 自動で閉じたときundefinedが入る
+let windowId;
 
 const goToSite = () => {
   const date = new Date();
   const hour = date.getHours();
-  const min = date.getMinutes(); 
+  const min = date.getMinutes();
   const isFlagged = flags[hour];
 
-  if (isFlagged && min%3===0 && !windowId) {
+  if (isFlagged && min===0 && !windowId) {
     // 新しいウインドウのフルスクリーンでsiteUrlを開く
     chrome.windows.create({url: siteUrl, state: 'fullscreen'}, (newWindow) => {
       windowId = newWindow.id;
     });
   } 
-  else if (isFlagged && min%3===0 && windowId){
+  else if (isFlagged && min===0 && windowId){
     // F11キーでフルスクリーンを解除するとウインドウが操作不能になる(バグ？)ため
     // フルスクリーンが解除されていたらウインドウを閉じる
     chrome.windows.get(windowId, (window) => {
@@ -68,6 +75,7 @@ const goToSite = () => {
     });
   }
   else if (windowId) {
+    // 毎時1分以降にフルスクリーンを解除した場合ウインドウを閉じる
     chrome.windows.get(windowId, (window) => {
       if (window.state === 'normal') {
         chrome.windows.remove(windowId);
@@ -81,8 +89,9 @@ const goToSite = () => {
 
 goToSite();
 
+// サイトでエクササイズメニューをクリックしてからx秒後にウインドウを閉じる
 chrome.runtime.onMessage.addListener((request) => {
-  // contentScript.jsからメッセージをうけとったらcb関数を実行する
+  // contentScript.jsからメッセージをうけとったらcb関数が実行される
 
   // 受け取ったメッセージをバックグランドページに出力 ".img-menusがクリックされました"
   console.log(request)
@@ -90,7 +99,7 @@ chrome.runtime.onMessage.addListener((request) => {
   // x秒後にウインドウを閉じる
   const x = 70
   setTimeout(() => {
-    console.log('here2');
+    if (windowId) { return }
     chrome.windows.remove(windowId);
     windowId = undefined;
   }, x * 1000)
