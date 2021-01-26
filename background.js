@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener((request) => {
   // x秒後にウインドウを閉じる
   const x = 70
   setTimeout(() => {
-    if (windowId) { return }
+    if (!windowId) { return }
     chrome.windows.remove(windowId);
     windowId = undefined;
   }, x * 1000)
