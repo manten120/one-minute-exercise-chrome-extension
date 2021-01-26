@@ -2,8 +2,20 @@
   "name": "強制1分間エクササイズ",
   "version": "1.0",
   "description": "サイト「強制1分間エクササイズ」を毎時0分に開く",
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
   "browser_action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
   },
   "background": {
     "scripts": ["background.js"],
