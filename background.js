@@ -97,7 +97,8 @@ chrome.runtime.onMessage.addListener((request) => {
   console.log(request)
   
   // x秒後にウインドウを閉じる
-  const x = 70
+  // (タイマー作動まで1秒+エクササイズ時間60秒+タイマー作動まで3秒+コミュニケーション時間15秒+原因不明の遅れのため調整3秒)
+  const x = 82;
   setTimeout(() => {
     if (!windowId) { return }
     chrome.windows.remove(windowId);
